@@ -141,17 +141,20 @@
             // Effect to handle incoming data from Softr via postMessage
             React.useEffect(() => {
                 const handleMessage = (event) => {
+                    // Only accept messages from your Softr app domains
                     const trustedOrigins = ['https://optinbot.softr.app', 'https://optinbot.preview.softr.app'];
                     if (!trustedOrigins.includes(event.origin)) {
                         return;
                     }
 
-                    const data = event.data;
-                    if (data && data.type === 'optinbot-config-data') {
-                        console.log("[Configurator] Received valid data from Softr:", data);
-                        setN8nWebhookUrl(data.webhookUrl || '');
-                        setClientId(data.clientId || '');
-                        setChatbotId(data.chatbotId || '');
+                    if (event.data?.type === "optinbot-config-data") {
+                        const { clientId, chatbotId, webhookUrl } = event.data;
+                        console.log("[Configurator] Received valid data:", event.data);
+
+                        // React-friendly state updates
+                        setClientId(clientId);
+                        setChatbotId(chatbotId);
+                        setN8nWebhookUrl(webhookUrl);
                     }
                 };
 
