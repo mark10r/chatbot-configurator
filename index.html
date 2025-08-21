@@ -156,7 +156,7 @@
                         setN8nWebhookUrl(webhookUrl);
                         
                         // Send acknowledgment back to Softr
-                        window.parent.postMessage({ type: "optinbot-config-ack" }, event.origin);
+                        window.parent.postMessage({ type: "optinbot-config-ack" }, "*");
                         console.log("[Configurator] Sent acknowledgment to Softr.");
                     }
                 };
@@ -562,3 +562,4 @@
 
 </body>
 </html>
+
