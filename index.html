@@ -141,19 +141,25 @@
             // --- EFFECTS ---
             // Effect to handle incoming data from Softr via postMessage
             React.useEffect(() => {
+                console.log("[Configurator] Listening for messages from parent window.");
                 const handleMessage = (event) => {
-                    // A list of allowed domains for security
+                    console.log(`[Configurator] Message received from origin: ${event.origin}`);
+                    
                     const trustedOrigins = ['https://optinbot.softr.app', 'https://optinbot.preview.softr.app']; 
                     
                     if (!trustedOrigins.includes(event.origin)) {
+                        console.warn(`[Configurator] Ignored message from untrusted origin: ${event.origin}`);
                         return;
                     }
 
                     const data = event.data;
                     if (data && data.type === 'optinbot-config-data') {
+                        console.log("[Configurator] Received valid data from Softr:", data);
                         if (data.webhookUrl) setN8nWebhookUrl(data.webhookUrl);
                         if (data.clientId) setClientId(data.clientId);
                         if (data.chatbotId) setChatbotId(data.chatbotId);
+                    } else {
+                        console.log("[Configurator] Received a message, but it was not the expected type.", data);
                     }
                 };
 
@@ -512,15 +518,37 @@
             );
         };
 
-        const ColorInput = ({ label, value, onChange }) => (
-            <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">{label}</label>
-                <div className="relative">
-                    <input type="text" value={value} onChange={onChange} className="w-full pl-3 pr-10 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500" />
-                    <input type="color" value={value} onChange={onChange} className="absolute right-1 top-1/2 -translate-y-1/2 w-8 h-7 p-0 border-none rounded-md cursor-pointer bg-transparent" />
+        const ColorInput = ({ label, value, onChange }) => {
+            const colorInputRef = React.useRef(null);
+
+            return (
+                <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">{label}</label>
+                    <div className="relative">
+                        <input 
+                            type="text" 
+                            value={value} 
+                            onChange={onChange} 
+                            className="w-full pl-3 pr-10 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500" 
+                        />
+                        <button 
+                            type="button"
+                            className="absolute right-1 top-1/2 -translate-y-1/2 w-8 h-7 p-0 border rounded-md cursor-pointer" 
+                            style={{ backgroundColor: value }}
+                            onClick={() => colorInputRef.current.click()}
+                            aria-label={`Change ${label} color`}
+                        />
+                         <input 
+                            ref={colorInputRef}
+                            type="color" 
+                            value={value} 
+                            onChange={onChange} 
+                            className="absolute -top-96 -left-96"
+                         />
+                    </div>
                 </div>
-            </div>
-        );
+            );
+        };
 
         const CheckboxInput = ({ label, checked, onChange }) => (
             <div className="flex items-center">
