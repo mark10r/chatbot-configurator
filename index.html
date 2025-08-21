@@ -165,6 +165,10 @@
 
                 window.addEventListener('message', handleMessage);
 
+                // Let the parent window (Softr) know that the iframe is ready to receive messages.
+                window.parent.postMessage({ type: 'iframe-ready' }, '*');
+                console.log("[Configurator] Sent 'iframe-ready' signal to parent.");
+
                 // Cleanup listener on component unmount
                 return () => {
                     window.removeEventListener('message', handleMessage);
