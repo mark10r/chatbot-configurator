@@ -79,9 +79,8 @@
         const colorPresets = baseColors.map(preset => ({ name: preset.name, primary: preset.color, user: lightenColor(preset.color, 75), bot: '#F3F4F6' }));
 
         // --- CLOUDINARY CONFIGURATION ---
-        // IMPORTANT: Replace these placeholders with your actual Cloudinary details.
-        const CLOUDINARY_CLOUD_NAME = 'dlasog0p4'; // <-- PASTE YOUR CLOUD NAME HERE
-        const CLOUDINARY_UPLOAD_PRESET = 'chatbot-icons'; // <-- PASTE YOUR UPLOAD PRESET HERE
+        const CLOUDINARY_CLOUD_NAME = 'dlasog0p4';
+        const CLOUDINARY_UPLOAD_PRESET = 'chatbot-icons';
 
         // --- MAIN APP COMPONENT ---
         function App() {
@@ -141,37 +140,26 @@
             // --- EFFECTS ---
             // Effect to handle incoming data from Softr via postMessage
             React.useEffect(() => {
-                console.log("[Configurator] Listening for messages from parent window.");
                 const handleMessage = (event) => {
-                    console.log(`[Configurator] Message received from origin: ${event.origin}`);
-                    
-                    const trustedOrigins = ['https://optinbot.softr.app', 'https://optinbot.preview.softr.app']; 
-                    
+                    const trustedOrigins = ['https://optinbot.softr.app', 'https://optinbot.preview.softr.app'];
                     if (!trustedOrigins.includes(event.origin)) {
-                        console.warn(`[Configurator] Ignored message from untrusted origin: ${event.origin}`);
                         return;
                     }
 
                     const data = event.data;
                     if (data && data.type === 'optinbot-config-data') {
                         console.log("[Configurator] Received valid data from Softr:", data);
-                        if (data.webhookUrl) setN8nWebhookUrl(data.webhookUrl);
-                        if (data.clientId) setClientId(data.clientId);
-                        if (data.chatbotId) setChatbotId(data.chatbotId);
-                    } else {
-                        console.log("[Configurator] Received a message, but it was not the expected type.", data);
+                        setN8nWebhookUrl(data.webhookUrl || '');
+                        setClientId(data.clientId || '');
+                        setChatbotId(data.chatbotId || '');
                     }
                 };
 
-                window.addEventListener('message', handleMessage);
+                window.addEventListener("message", handleMessage);
 
-                // Let the parent window (Softr) know that the iframe is ready to receive messages.
-                window.parent.postMessage({ type: 'iframe-ready' }, '*');
-                console.log("[Configurator] Sent 'iframe-ready' signal to parent.");
-
-                // Cleanup listener on component unmount
+                // Cleanup the listener when the component unmounts
                 return () => {
-                    window.removeEventListener('message', handleMessage);
+                    window.removeEventListener("message", handleMessage);
                 };
             }, []); // Empty dependency array ensures this runs only once on mount
 
@@ -180,12 +168,10 @@
                 try {
                     const savedSettings = localStorage.getItem('optinbotConfiguratorSettings');
                     if (savedSettings) {
-                        const { n8nWebhookUrl, clientId, chatbotId, theme } = JSON.parse(savedSettings);
-                        // Only set from localStorage if not already set by postMessage
-                        if (n8nWebhookUrl && !n8nWebhookUrl) setN8nWebhookUrl(n8nWebhookUrl);
-                        if (clientId && !clientId) setClientId(clientId);
-                        if (chatbotId && !chatbotId) setChatbotId(chatbotId);
-                        if (theme) setTheme(prevTheme => ({ ...initialTheme, ...theme }));
+                        const { theme: savedTheme } = JSON.parse(savedSettings);
+                        if (savedTheme) {
+                            setTheme(prevTheme => ({ ...prevTheme, ...savedTheme }));
+                        }
                     }
                 } catch (error) {
                     console.error("Failed to load settings from localStorage:", error);
@@ -202,7 +188,6 @@
                     delete configTheme.poweredByText;
                     delete configTheme.poweredByUrl;
                 }
-                // ... (other conditional deletions) ...
 
                 const code = `<script>
   window.optinbotConfig = {
@@ -221,7 +206,8 @@
             // --- EVENT HANDLERS ---
             const handleSaveSettings = () => {
                 try {
-                    const settingsToSave = { n8nWebhookUrl, clientId, chatbotId, theme };
+                    // Only save the theme settings, as the other data is injected by Softr
+                    const settingsToSave = { theme };
                     localStorage.setItem('optinbotConfiguratorSettings', JSON.stringify(settingsToSave));
                     setSaveButtonText('Saved!');
                     setTimeout(() => setSaveButtonText('Save'), 2000);
@@ -231,10 +217,6 @@
                     setTimeout(() => setSaveButtonText('Save'), 2000);
                 }
             };
-
-            const handleCopyCode = React.useCallback(() => {
-                // ... (copy logic remains the same) ...
-            }, [generatedCode]);
 
             // --- RENDER ---
             return (
@@ -376,7 +358,7 @@
                             </div>
                         </div>
                     </div>
-                    <CodeModal isOpen={isCodeModalOpen} onClose={() => setIsCodeModalOpen(false)} code={generatedCode} onCopy={handleCopyCode} copyButtonText={copyButtonText} />
+                    <CodeModal isOpen={isCodeModalOpen} onClose={() => setIsCodeModalOpen(false)} code={generatedCode} copyButtonText={copyButtonText} />
                 </div>
             );
         }
@@ -460,7 +442,7 @@
             );
         };
 
-        const CodeModal = ({ isOpen, onClose, code, onCopy, copyButtonText }) => {
+        const CodeModal = ({ isOpen, onClose, code, copyButtonText }) => {
             if (!isOpen) return null;
 
             return (
@@ -484,7 +466,7 @@
                         </div>
                         <div className="flex justify-end items-center p-4 border-t border-gray-200 bg-gray-50 rounded-b-xl">
                             <button onClick={onClose} className="px-4 py-2 mr-3 rounded-md text-gray-700 bg-gray-200 hover:bg-gray-300 transition-colors font-semibold">Close</button>
-                            <button onClick={onCopy} className={`w-32 flex justify-center items-center px-4 py-2 rounded-md font-semibold text-white transition-colors ${copyButtonText === 'Copied!' ? 'bg-green-600' : 'bg-indigo-600 hover:bg-indigo-700'} focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-50 focus:ring-indigo-500`}>
+                            <button onClick={copyButtonText} className={`w-32 flex justify-center items-center px-4 py-2 rounded-md font-semibold text-white transition-colors ${copyButtonText === 'Copied!' ? 'bg-green-600' : 'bg-indigo-600 hover:bg-indigo-700'} focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-50 focus:ring-indigo-500`}>
                                 {copyButtonText}
                             </button>
                         </div>
