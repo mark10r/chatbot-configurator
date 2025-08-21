@@ -374,7 +374,7 @@
 
                             {/* ----- Right Column: Live Preview & Code ----- */}
                             <div className="bg-white p-6 rounded-xl shadow-md flex flex-col space-y-4" style={{height: '800px'}}>
-                                <div className="flex justify-between items-center gap-4">
+                                <div className="flex justify-between items-center">
                                     <h2 className="text-xl font-semibold text-gray-700">Live Preview</h2>
                                     <div className="flex items-center gap-2">
                                          <button
@@ -582,20 +582,17 @@
                             onChange={onChange} 
                             className="w-full pl-3 pr-10 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500" 
                         />
-                        <button 
-                            type="button"
-                            className="absolute right-1 top-1/2 -translate-y-1/2 w-8 h-7 p-0 border rounded-md cursor-pointer" 
+                        <div 
+                            className="absolute right-1 top-1/2 -translate-y-1/2 w-8 h-7 p-0 border rounded-md" 
                             style={{ backgroundColor: value }}
-                            onClick={() => colorInputRef.current.click()}
-                            aria-label={`Change ${label} color`}
                         />
-                         <input 
+                        <input 
                             ref={colorInputRef}
                             type="color" 
                             value={value} 
                             onChange={onChange} 
-                            className="absolute -top-96 -left-96"
-                         />
+                            className="absolute right-1 top-1/2 -translate-y-1/2 w-8 h-7 opacity-0 cursor-pointer"
+                        />
                     </div>
                 </div>
             );
