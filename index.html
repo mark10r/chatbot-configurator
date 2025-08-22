@@ -257,8 +257,8 @@
                     <div className="max-w-7xl mx-auto">
                         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
                             {/* ----- Left Column: Form ----- */}
-                            <div className="bg-white rounded-xl shadow-md" style={{height: '800px'}}>
-                               <div className="p-6 h-full overflow-y-auto space-y-6">
+                            <div className="bg-white rounded-xl shadow-md lg:max-h-[calc(100vh-4rem)] lg:overflow-y-auto">
+                               <div className="p-6 h-full space-y-6">
                                     <div className="space-y-4 border-b border-gray-200 pb-6">
                                         <h2 className="text-xl font-semibold text-gray-700">General Settings</h2>
                                         <div>
@@ -373,7 +373,7 @@
                             </div>
 
                             {/* ----- Right Column: Live Preview & Code ----- */}
-                            <div className="bg-white p-6 rounded-xl shadow-md flex flex-col space-y-4" style={{height: '800px'}}>
+                            <div className="bg-white p-6 rounded-xl shadow-md flex flex-col space-y-4 lg:sticky lg:top-8">
                                 <div className="flex justify-between items-center">
                                     <h2 className="text-xl font-semibold text-gray-700">Live Preview</h2>
                                     <div className="flex items-center gap-2">
@@ -391,7 +391,7 @@
                                         </button>
                                     </div>
                                 </div>
-                                <div className="w-full flex-grow bg-gray-100 rounded-lg border border-gray-300 overflow-hidden">
+                                <div className="w-full h-96 lg:h-[600px] bg-gray-100 rounded-lg border border-gray-300 overflow-hidden">
                                     <iframe key={generatedCode} srcDoc={generatedCode} title="Widget Live Preview" className="w-full h-full border-0" sandbox="allow-scripts allow-same-origin"></iframe>
                                 </div>
                             </div>
