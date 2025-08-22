@@ -392,7 +392,13 @@
                                     </div>
                                 </div>
                                 <div className="w-full h-96 lg:h-[600px] bg-gray-100 rounded-lg border border-gray-300 overflow-hidden">
-                                    <iframe key={generatedCode} srcDoc={generatedCode} title="Widget Live Preview" className="w-full h-full border-0" sandbox="allow-scripts allow-same-origin"></iframe>
+                                     <iframe
+                                        key={generatedCode}
+                                        srcDoc={`<!DOCTYPE html><html><head><style>body { margin: 0; padding: 2rem; display: flex; justify-content: flex-end; align-items: flex-end; height: 100vh; box-sizing: border-box; background-color: #f0f2f5; }</style></head><body>${generatedCode}</body></html>`}
+                                        title="Widget Live Preview"
+                                        className="w-full h-full border-0"
+                                        sandbox="allow-scripts allow-same-origin"
+                                    ></iframe>
                                 </div>
                             </div>
                         </div>
